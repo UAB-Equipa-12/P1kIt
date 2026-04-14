@@ -9,10 +9,11 @@
 
   <ItemGroup>
     <Folder Include="Controller\" />
-    <Folder Include="Model\Entities\" />
-    <Folder Include="Model\Persistence\" />
-    <Folder Include="Model\Services\" />
     <Folder Include="View\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 
 </Project>
