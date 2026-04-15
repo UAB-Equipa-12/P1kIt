@@ -32,7 +32,7 @@ namespace SistemaPicagemPonto.Controller
         }
 
         // Verifica se o username e password correspondem a um colaborador existente
-/*         public bool ValidarLogin(string username, string password)
+        public bool ValidarLogin(string username, string password)
         {
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
                 return false;
@@ -43,7 +43,7 @@ namespace SistemaPicagemPonto.Controller
                 return false;
 
             return password == passwordCorreta;
-        } */
+        }
 
         // Devolve o histórico de registos, por colaborador e datas
         public List<RegistoPonto> ObterHistorico(int? colaboradorId = null, DateTime? dataInicio = null, DateTime? dataFim = null)
