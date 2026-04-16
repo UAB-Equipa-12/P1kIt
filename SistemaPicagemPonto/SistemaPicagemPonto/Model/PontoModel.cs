@@ -19,35 +19,47 @@
             registos = repo.Carregar();
         }
 
-        public void RegistarEntrada(int colaboradorId)
+        public bool RegistarEntrada(int colaboradorId)
         {
-            RegistoPonto r = new()
+            // Verifica se já existe um registo aberto
+            bool existeAberto = registos.Any(r =>
+                r.IdColaborador == colaboradorId &&
+                r.HoraSaida == null);
+
+            if (existeAberto)
+                return false;
+
+            RegistoPonto novo = new()
             {
                 IdColaborador = colaboradorId,
                 Data = DateTime.Today,
                 HoraEntrada = DateTime.Now
             };
 
-            registos.Add(r);
+            registos.Add(novo);
 
             repo.Guardar(registos);
 
             AlteracaoRegistos?.Invoke(this);
+
+            return true;
         }
 
-        public void RegistarSaida(int colaboradorId)
+        public bool RegistarSaida(int colaboradorId)
         {
             RegistoPonto? registoAberto = registos
                 .LastOrDefault(r => r.IdColaborador == colaboradorId && r.HoraSaida == null);
 
             if (registoAberto == null)
-                return;
+                return false;
 
             registoAberto.HoraSaida = DateTime.Now;
 
             repo.Guardar(registos);
 
             AlteracaoRegistos?.Invoke(this);
+
+            return true;
         }
 
         public void ObterRegistos(ref List<RegistoPonto> lista)
