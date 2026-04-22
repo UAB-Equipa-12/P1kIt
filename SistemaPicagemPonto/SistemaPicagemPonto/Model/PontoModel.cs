@@ -6,7 +6,8 @@
         private JsonRepository repo;
 
         public delegate void RegistosAtualizados(object origem);
-        public event RegistosAtualizados AlteracaoRegistos;
+        public event RegistosAtualizados? AlteracaoRegistos;
+
         private readonly List<Colaborador> Colaboradores =
         [
             new Colaborador { Id = 1, Nome = "Colaborador1", Password = "1234" },
@@ -16,18 +17,28 @@
         public PontoModel()
         {
             repo = new JsonRepository();
-            registos = repo.Carregar();
+
+            try
+            {
+                registos = repo.Carregar();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao carregar dados.", ex);
+            }
         }
 
-        public bool RegistarEntrada(int colaboradorId)
+        public void RegistarEntrada(int colaboradorId)
         {
-            // Verifica se já existe um registo aberto
+            if (!Colaboradores.Any(c => c.Id == colaboradorId))
+                throw new ArgumentException("Colaborador não existe.");
+
             bool existeAberto = registos.Any(r =>
                 r.IdColaborador == colaboradorId &&
                 r.HoraSaida == null);
 
             if (existeAberto)
-                return false;
+                throw new InvalidOperationException("Já existe uma entrada sem saída.");
 
             RegistoPonto novo = new()
             {
@@ -38,28 +49,38 @@
 
             registos.Add(novo);
 
-            repo.Guardar(registos);
+            try
+            {
+                repo.Guardar(registos);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao guardar dados.", ex);
+            }
 
             AlteracaoRegistos?.Invoke(this);
-
-            return true;
         }
 
-        public bool RegistarSaida(int colaboradorId)
+        public void RegistarSaida(int colaboradorId)
         {
             RegistoPonto? registoAberto = registos
                 .LastOrDefault(r => r.IdColaborador == colaboradorId && r.HoraSaida == null);
 
             if (registoAberto == null)
-                return false;
+                throw new InvalidOperationException("Não existe entrada para fechar.");
 
             registoAberto.HoraSaida = DateTime.Now;
 
-            repo.Guardar(registos);
+            try
+            {
+                repo.Guardar(registos);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao guardar dados.", ex);
+            }
 
             AlteracaoRegistos?.Invoke(this);
-
-            return true;
         }
 
         public void ObterRegistos(ref List<RegistoPonto> lista)
@@ -67,12 +88,18 @@
             lista = [.. registos];
         }
 
-        public string? GetPassword(string username)
+        public string GetPassword(string username)
         {
+            if (string.IsNullOrWhiteSpace(username))
+                throw new ArgumentException("Username inválido.");
+
             Colaborador? c = Colaboradores
                 .FirstOrDefault(c => c.Nome.Equals(username, StringComparison.OrdinalIgnoreCase));
 
-            return c?.Password;
+            if (c == null)
+                throw new InvalidOperationException("Utilizador não encontrado.");
+
+            return c.Password;
         }
     }
 }
