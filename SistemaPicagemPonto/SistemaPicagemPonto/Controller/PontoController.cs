@@ -17,8 +17,15 @@ namespace SistemaPicagemPonto.Controller
             if (!IdValido(inputId, out int id))
                 return false;
 
-            model.RegistarEntrada(id);
-            return true;
+            try
+            {
+                model.RegistarEntrada(id);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         // Regista a saída de um colaborador após validar o ID
@@ -27,8 +34,15 @@ namespace SistemaPicagemPonto.Controller
             if (!IdValido(inputId, out int id))
                 return false;
 
-            model.RegistarSaida(id);
-            return true;
+            try
+            {
+                model.RegistarSaida(id);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         // Verifica se o username e password correspondem a um colaborador existente
@@ -37,12 +51,15 @@ namespace SistemaPicagemPonto.Controller
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
                 return false;
 
-            string? passwordCorreta = model.GetPassword(username);
-
-            if (passwordCorreta == null)
+            try
+            {
+                string passwordCorreta = model.GetPassword(username);
+                return password == passwordCorreta;
+            }
+            catch
+            {
                 return false;
-
-            return password == passwordCorreta;
+            }
         }
 
         // Devolve o histórico de registos, por colaborador e datas
