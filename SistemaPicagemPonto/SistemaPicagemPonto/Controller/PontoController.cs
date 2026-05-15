@@ -1,12 +1,13 @@
 using SistemaPicagemPonto.Model;
+using SistemaPicagemPonto.Interfaces;
 
 namespace SistemaPicagemPonto.Controller
 {
     public class PontoController
     {
-        private readonly PontoModel model;
+        private readonly IPontoModel model;
 
-        public PontoController(PontoModel model)
+        public PontoController(IPontoModel model)
         {
             this.model = model;
         }

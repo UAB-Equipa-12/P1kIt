@@ -1,6 +1,8 @@
-﻿namespace SistemaPicagemPonto.Model
+﻿using SistemaPicagemPonto.Interfaces;
+
+namespace SistemaPicagemPonto.Model
 {
-    public class PontoModel
+    public class PontoModel : IPontoModel
     {
         private List<RegistoPonto> registos;
         private JsonRepository repo;
