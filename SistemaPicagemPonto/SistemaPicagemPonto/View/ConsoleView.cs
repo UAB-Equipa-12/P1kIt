@@ -14,6 +14,14 @@ namespace SistemaPicagemPonto.View
 
         public void Iniciar()
         {
+            bool loginValido = FazerLogin();
+
+            if (!loginValido)
+            {
+                Console.WriteLine("Programa encerrado.");
+                return;
+            }
+
             bool sair = false;
 
             while (!sair)
@@ -65,6 +73,49 @@ namespace SistemaPicagemPonto.View
             }
         }
 
+        private bool FazerLogin()
+        {
+            const int maxTentativas = 3;
+            int tentativa = 0;
+
+            while (tentativa < maxTentativas)
+            {
+                Console.Clear();
+                Console.WriteLine("=== Login Plataforma de Gestão ===");
+                Console.Write("Username: ");
+                string username = Console.ReadLine() ?? "";
+
+                Console.Write("Password: ");
+                string password = Console.ReadLine() ?? "";
+
+                bool sucesso = controller.ValidarLogin(username, password);
+
+                if (sucesso)
+                {
+                    Console.WriteLine("\nLogin sucedido.");
+                    Console.WriteLine("Prima ENTER para continuar...");
+                    Console.ReadLine();
+                    Console.Clear();
+                    return true;
+                }
+
+                tentativa++;
+                Console.WriteLine("\nLogin falhado.");
+
+                if (tentativa < maxTentativas)
+                {
+                    Console.WriteLine($"Tentativas restantes: {maxTentativas - tentativa}");
+                    Console.WriteLine("Prima ENTER para tentar novamente...");
+                    Console.ReadLine();
+                }
+            }
+
+            Console.WriteLine("\nNúmero máximo de tentativas excedido.");
+            Console.WriteLine("Prima ENTER para sair...");
+            Console.ReadLine();
+            return false;
+        }
+
         private static void MostrarMenu()
         {
             Console.WriteLine("=== Sistema de Picagem de Ponto ===");
@@ -97,26 +148,11 @@ namespace SistemaPicagemPonto.View
             if (!id.HasValue)
                 return;
 
-            try
-            {
-                bool sucesso = controller.RegistarEntrada(id.Value.ToString());
+            bool sucesso = controller.RegistarEntrada(id.Value.ToString());
 
-                Console.WriteLine(sucesso
-                    ? "Entrada registada com sucesso."
-                    : "Erro: não foi possível registar a entrada.");
-            }
-            catch (ArgumentException ex)
-            {
-                Console.WriteLine($"Erro: {ex.Message}");
-            }
-            catch (InvalidOperationException ex)
-            {
-                Console.WriteLine($"Erro: {ex.Message}");
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Erro de sistema ao registar entrada.");
-            }
+            Console.WriteLine(sucesso
+                ? "Entrada registada com sucesso."
+                : "Erro: não foi possível registar a entrada.");
         }
 
         private void RegistarSaida()
@@ -125,26 +161,11 @@ namespace SistemaPicagemPonto.View
             if (!id.HasValue)
                 return;
 
-            try
-            {
-                bool sucesso = controller.RegistarSaida(id.Value.ToString());
+            bool sucesso = controller.RegistarSaida(id.Value.ToString());
 
-                Console.WriteLine(sucesso
-                    ? "Saída registada com sucesso."
-                    : "Erro: não foi possível registar a saída.");
-            }
-            catch (ArgumentException ex)
-            {
-                Console.WriteLine($"Erro: {ex.Message}");
-            }
-            catch (InvalidOperationException ex)
-            {
-                Console.WriteLine($"Erro: {ex.Message}");
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Erro de sistema ao registar saída.");
-            }
+            Console.WriteLine(sucesso
+                ? "Saída registada com sucesso."
+                : "Erro: não foi possível registar a saída.");
         }
 
         private void ConsultarHistorico()
@@ -214,6 +235,7 @@ namespace SistemaPicagemPonto.View
                     Console.WriteLine("Erro: data inicial inválida.");
                     return;
                 }
+
                 dataInicio = di;
             }
 
@@ -224,6 +246,7 @@ namespace SistemaPicagemPonto.View
                     Console.WriteLine("Erro: data final inválida.");
                     return;
                 }
+
                 dataFim = df;
             }
 
