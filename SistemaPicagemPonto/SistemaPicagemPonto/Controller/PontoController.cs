@@ -1,9 +1,8 @@
-using SistemaPicagemPonto.Model;
 using SistemaPicagemPonto.Interfaces;
 
 namespace SistemaPicagemPonto.Controller
 {
-    public class PontoController
+    public class PontoController : IPontoController
     {
         private readonly IPontoModel model;
 
@@ -55,7 +54,7 @@ namespace SistemaPicagemPonto.Controller
             try
             {
                 string passwordCorreta = model.GetPassword(username);
-                return password == passwordCorreta;
+                return model.ValidarLogin(username, password);
             }
             catch
             {
@@ -64,10 +63,9 @@ namespace SistemaPicagemPonto.Controller
         }
 
         // Devolve o histórico de registos, por colaborador e datas
-        public List<RegistoPonto> ObterHistorico(int? colaboradorId = null, DateTime? dataInicio = null, DateTime? dataFim = null)
+        public List<IRegistoPonto> ObterHistorico(int? colaboradorId = null, DateTime? dataInicio = null, DateTime? dataFim = null)
         {
-            List<RegistoPonto> lista = [];
-            model.ObterRegistos(ref lista);
+            List<IRegistoPonto> lista = model.ObterRegistos();
 
             if (colaboradorId.HasValue)
                 lista = lista.Where(r => r.IdColaborador == colaboradorId.Value).ToList();
@@ -84,7 +82,7 @@ namespace SistemaPicagemPonto.Controller
         // Calcula o total de horas trabalhadas com base nos registos completos
         public double CalcularTotalHoras(int colaboradorId, DateTime? dataInicio = null, DateTime? dataFim = null)
         {
-            List<RegistoPonto> registos = ObterHistorico(colaboradorId, dataInicio, dataFim);
+            List<IRegistoPonto> registos = ObterHistorico(colaboradorId, dataInicio, dataFim);
 
             double total = registos
                 .Where(r => r.HoraEntrada.HasValue && r.HoraSaida.HasValue)

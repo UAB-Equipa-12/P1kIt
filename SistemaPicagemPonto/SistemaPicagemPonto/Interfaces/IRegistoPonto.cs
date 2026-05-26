@@ -1,8 +1,6 @@
-﻿using SistemaPicagemPonto.Interfaces;
-
-namespace SistemaPicagemPonto.Model
+﻿namespace SistemaPicagemPonto.Interfaces
 {
-    public class RegistoPonto : IRegistoPonto
+    public interface IRegistoPonto
     {
         public int IdColaborador { get; set; }
         public DateTime Data { get; set; }

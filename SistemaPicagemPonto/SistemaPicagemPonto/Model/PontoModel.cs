@@ -4,8 +4,8 @@ namespace SistemaPicagemPonto.Model
 {
     public class PontoModel : IPontoModel
     {
-        private List<RegistoPonto> registos;
-        private JsonRepository repo;
+        private readonly List<RegistoPonto> registos;
+        private readonly IJsonRepository repo;
 
         public delegate void RegistosAtualizados(object origem);
         public event RegistosAtualizados? AlteracaoRegistos;
@@ -16,9 +16,9 @@ namespace SistemaPicagemPonto.Model
             new Colaborador { Id = 42, Nome = "Colaborador2", Password = "abcd" }
         ];
 
-        public PontoModel()
+        public PontoModel(IJsonRepository repository)
         {
-            repo = new JsonRepository();
+            repo = repository;
 
             try
             {
@@ -85,9 +85,9 @@ namespace SistemaPicagemPonto.Model
             AlteracaoRegistos?.Invoke(this);
         }
 
-        public void ObterRegistos(ref List<RegistoPonto> lista)
+        public List<IRegistoPonto> ObterRegistos()
         {
-            lista = [.. registos];
+            return [.. registos];
         }
 
         public string GetPassword(string username)
@@ -102,6 +102,15 @@ namespace SistemaPicagemPonto.Model
                 throw new InvalidOperationException("Utilizador não encontrado.");
 
             return c.Password;
+        }
+
+        public bool ValidarLogin(string username, string password)
+        {
+            Colaborador? c = Colaboradores
+                .FirstOrDefault(c =>
+                    c.Nome.Equals(username, StringComparison.OrdinalIgnoreCase));
+
+            return c != null && c.Password == password;
         }
     }
 }

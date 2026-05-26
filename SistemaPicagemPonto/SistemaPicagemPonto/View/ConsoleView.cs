@@ -1,13 +1,14 @@
 ﻿using SistemaPicagemPonto.Controller;
+using SistemaPicagemPonto.Interfaces;
 using SistemaPicagemPonto.Model;
 
 namespace SistemaPicagemPonto.View
 {
     public class ConsoleView
     {
-        private readonly PontoController controller;
+        private readonly IPontoController controller;
 
-        public ConsoleView(PontoController controller)
+        public ConsoleView(IPontoController controller)
         {
             this.controller = controller;
         }
@@ -174,7 +175,7 @@ namespace SistemaPicagemPonto.View
             if (!id.HasValue)
                 return;
 
-            List<RegistoPonto> historico = controller.ObterHistorico(colaboradorId: id.Value);
+            List<IRegistoPonto> historico = controller.ObterHistorico(colaboradorId: id.Value);
 
             if (historico.Count == 0)
             {
@@ -184,7 +185,7 @@ namespace SistemaPicagemPonto.View
 
             Console.WriteLine($"\n=== Histórico do colaborador {id.Value} ===");
 
-            foreach (RegistoPonto registo in historico)
+            foreach (IRegistoPonto registo in historico)
             {
                 string entrada = registo.HoraEntrada?.ToString("HH:mm:ss") ?? "-";
                 string saida = registo.HoraSaida?.ToString("HH:mm:ss") ?? "-";
@@ -201,7 +202,7 @@ namespace SistemaPicagemPonto.View
             if (!id.HasValue)
                 return;
 
-            List<RegistoPonto> historico = controller.ObterHistorico(colaboradorId: id.Value);
+            List<IRegistoPonto> historico = controller.ObterHistorico(colaboradorId: id.Value);
 
             if (historico.Count == 0)
             {
@@ -250,7 +251,7 @@ namespace SistemaPicagemPonto.View
                 dataFim = df;
             }
 
-            List<RegistoPonto> historico = controller.ObterHistorico(id.Value, dataInicio, dataFim);
+            List<IRegistoPonto> historico = controller.ObterHistorico(id.Value, dataInicio, dataFim);
 
             if (historico.Count == 0)
             {

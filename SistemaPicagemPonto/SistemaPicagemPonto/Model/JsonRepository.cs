@@ -1,8 +1,9 @@
 ﻿using Newtonsoft.Json;
+using SistemaPicagemPonto.Interfaces;
 
 namespace SistemaPicagemPonto.Model
 {
-    public class JsonRepository
+    public class JsonRepository : IJsonRepository
     {
         private const string FILE = "registos.json";
 
@@ -18,7 +19,7 @@ namespace SistemaPicagemPonto.Model
                 return [];
 
             string json = File.ReadAllText(FILE);
-            return JsonConvert.DeserializeObject<List<RegistoPonto>>(json);
+            return JsonConvert.DeserializeObject<List<RegistoPonto>>(json) ?? [];
         }
     }
 }
