@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using SistemaPicagemPonto.Interfaces;
 
 namespace SistemaPicagemPonto.Model
@@ -7,19 +7,31 @@ namespace SistemaPicagemPonto.Model
     {
         private const string FILE = "registos.json";
 
-        public void Guardar(List<RegistoPonto> dados)
+        public void Guardar(IEnumerable<IRegistoPonto> dados)
         {
-            string json = JsonConvert.SerializeObject(dados, Formatting.Indented);
+            List<RegistoPonto> registos = dados
+                .Select(r => new RegistoPonto
+                {
+                    IdColaborador = r.IdColaborador,
+                    Data = r.Data,
+                    HoraEntrada = r.HoraEntrada,
+                    HoraSaida = r.HoraSaida
+                })
+                .ToList();
+
+            string json = JsonConvert.SerializeObject(registos, Formatting.Indented);
             File.WriteAllText(FILE, json);
         }
 
-        public List<RegistoPonto> Carregar()
+        public List<IRegistoPonto> Carregar()
         {
             if (!File.Exists(FILE))
                 return [];
 
             string json = File.ReadAllText(FILE);
-            return JsonConvert.DeserializeObject<List<RegistoPonto>>(json) ?? [];
+            List<RegistoPonto> registos = JsonConvert.DeserializeObject<List<RegistoPonto>>(json) ?? [];
+
+            return registos.Cast<IRegistoPonto>().ToList();
         }
     }
 }

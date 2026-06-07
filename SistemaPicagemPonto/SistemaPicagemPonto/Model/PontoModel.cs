@@ -4,7 +4,7 @@ namespace SistemaPicagemPonto.Model
 {
     public class PontoModel : IPontoModel
     {
-        private readonly List<RegistoPonto> registos;
+        private readonly List<IRegistoPonto> registos;
         private readonly IJsonRepository repo;
 
         public delegate void RegistosAtualizados(object origem);
@@ -42,7 +42,7 @@ namespace SistemaPicagemPonto.Model
             if (existeAberto)
                 throw new InvalidOperationException("Já existe uma entrada sem saída.");
 
-            RegistoPonto novo = new()
+            IRegistoPonto novo = new RegistoPonto()
             {
                 IdColaborador = colaboradorId,
                 Data = DateTime.Today,
@@ -65,7 +65,7 @@ namespace SistemaPicagemPonto.Model
 
         public void RegistarSaida(int colaboradorId)
         {
-            RegistoPonto? registoAberto = registos
+            IRegistoPonto? registoAberto = registos
                 .LastOrDefault(r => r.IdColaborador == colaboradorId && r.HoraSaida == null);
 
             if (registoAberto == null)
@@ -87,7 +87,7 @@ namespace SistemaPicagemPonto.Model
 
         public List<IRegistoPonto> ObterRegistos()
         {
-            return [.. registos];
+            return registos.ToList();
         }
 
         public string GetPassword(string username)

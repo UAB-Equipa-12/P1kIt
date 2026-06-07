@@ -1,6 +1,5 @@
 ﻿using SistemaPicagemPonto.Controller;
 using SistemaPicagemPonto.Interfaces;
-using SistemaPicagemPonto.Model;
 
 namespace SistemaPicagemPonto.View
 {
