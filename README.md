@@ -1,50 +1,166 @@
-# P1kIt - Sistema de Picagem de Ponto
+# Sistema de Picagem de Ponto
 
-Aplicação de consola em C# para registo de entrada e saída de colaboradores, organizada segundo a arquitectura MVC.
+## Descrição
 
-## Arquitectura
+O Sistema de Picagem de Ponto é uma aplicação desenvolvida em C# que permite efetuar o registo e consulta de entradas e saídas de colaboradores. A aplicação segue a arquitetura MVC (Model-View-Controller), promovendo a separação de responsabilidades e facilitando a manutenção e evolução do código.
 
-- `Model`: entidades, regras de negócio e persistência em JSON.
-- `View`: interface de consola.
-- `Controller`: coordenação entre View e Model.
-- `Interfaces`: contratos usados para reduzir dependências entre componentes.
+Os registos são persistidos em formato JSON e podem ser exportados para PDF para efeitos de consulta e arquivo.
 
-## Integração das interfaces
+---
 
-A persistência JSON é exposta através de `IJsonRepository`, que trabalha com `IRegistoPonto`.
-A implementação concreta `JsonRepository` converte internamente os dados para `RegistoPonto` apenas no momento da serialização/deserialização.
+## Arquitetura
 
-O `Program.cs` instancia os componentes por interface:
+O projeto segue o padrão MVC:
 
-```csharp
-IJsonRepository repo = new JsonRepository();
-IPontoModel model = new PontoModel(repo);
-IPontoController controller = new PontoController(model);
-ConsoleView view = new(controller);
-```
+### Model
 
-## Credenciais de teste
+Responsável pela gestão dos dados, regras de negócio e persistência da informação.
 
-- Username: `Colaborador1` | Password: `1234`
-- Username: `Colaborador2` | Password: `abcd`
+### View
+
+Responsável pela interação com o utilizador através da consola.
+
+### Controller
+
+Responsável pela coordenação entre a View e o Model.
+
+### Interfaces Utilizadas
+
+Para reduzir o acoplamento entre componentes e melhorar a reutilização do código, foram utilizadas as seguintes interfaces:
+
+* IPontoController
+* IPontoModel
+* IRegistoPonto
+* IJsonRepository
+
+---
 
 ## Funcionalidades
 
-- Login de colaborador.
-- Registo de entrada.
-- Registo de saída.
-- Consulta de histórico.
-- Cálculo de total de horas.
-- Persistência em `registos.json`.
+* Autenticação de colaboradores
+* Registo de entrada
+* Registo de saída
+* Consulta de histórico de registos
+* Persistência de dados em JSON
+* Exportação de histórico para PDF
+* Validação básica de operações
 
-## Validação sugerida em Ubuntu/WSL
+---
+
+## Tecnologias Utilizadas
+
+* C#
+* .NET 10
+* Newtonsoft.Json
+* PDFsharp
+
+---
+
+## Estrutura do Projeto
+
+SistemaPicagemPonto/
+
+├── Controller/
+
+├── Interfaces/
+
+├── Model/
+
+├── Services/
+
+├── View/
+
+└── Program.cs
+
+---
+
+## Persistência de Dados
+
+Os registos são armazenados no ficheiro:
+
+registos.json
+
+O ficheiro é criado automaticamente durante a execução da aplicação.
+
+---
+
+## Exportação PDF
+
+A aplicação permite exportar o histórico de registos de um colaborador para um ficheiro PDF.
+
+O relatório inclui:
+
+* Identificação do colaborador
+* Datas dos registos
+* Horas de entrada
+* Horas de saída
+
+Os ficheiros PDF são gerados na pasta de execução da aplicação.
+
+---
+
+## Instalação
+
+Restaurar dependências:
 
 ```bash
-cd SistemaPicagemPonto/SistemaPicagemPonto
 dotnet restore
+```
+
+Compilar:
+
+```bash
+dotnet build
+```
+
+Executar:
+
+```bash
 dotnet run
 ```
 
-## Nota
+---
 
-A opção de exportação PDF encontra-se preparada na View, mas a geração efectiva do ficheiro PDF ainda não está implementada.
+## Credenciais de Teste
+
+### Colaborador 1
+
+Utilizador: Colaborador1
+
+Password: 1234
+
+### Colaborador 2
+
+Utilizador: Colaborador2
+
+Password: abcd
+
+---
+
+## Equipa
+
+### Team Leader
+
+Pedro Ramalho
+
+### Desenvolvimento do Model
+
+Rui Araújo
+
+### Desenvolvimento do Controller
+
+Andreia
+
+### Desenvolvimento da View
+
+Fabiana
+
+### Verificação e QA
+
+Jorge Priolé
+
+---
+
+## Observações
+
+Durante o desenvolvimento foram aplicados princípios de separação entre interface e implementação, utilização de interfaces para redução de dependências diretas entre componentes e organização do código segundo o padrão MVC, promovendo uma solução mais modular e de fácil manutenção.

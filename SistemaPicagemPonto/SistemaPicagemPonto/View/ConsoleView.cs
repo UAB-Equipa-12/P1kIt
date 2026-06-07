@@ -1,5 +1,6 @@
 ﻿using SistemaPicagemPonto.Controller;
 using SistemaPicagemPonto.Interfaces;
+using SistemaPicagemPonto.Services;
 
 namespace SistemaPicagemPonto.View
 {
@@ -258,7 +259,27 @@ namespace SistemaPicagemPonto.View
                 return;
             }
 
-            Console.WriteLine("Exportação PDF preparada na View. Falta integrar a geração do ficheiro.");
+            try
+            {
+                PdfExporter.Exportar(historico, id.Value);
+                Console.WriteLine("PDF exportado com sucesso.");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Console.WriteLine("Erro: sem permissões para criar o ficheiro PDF.");
+            }
+            catch (FileNotFoundException)
+            {
+                Console.WriteLine("Erro: não foi possível localizar um ficheiro necessário para gerar o PDF.");
+            }
+            catch (IOException)
+            {
+                Console.WriteLine("Erro: ocorreu um problema ao escrever o ficheiro PDF.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro inesperado ao exportar PDF: {ex.Message}");
+            }
         }
     }
 }
