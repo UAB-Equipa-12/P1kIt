@@ -8,64 +8,82 @@ namespace SistemaPicagemPonto.Controller
 
         public PontoController(IPontoModel model)
         {
-            this.model = model;
+            this.model = model ?? throw new ArgumentNullException(nameof(model));
         }
 
-        // Regista a entrada de um colaborador após validar o ID
+        public string? UtilizadorLogado { get; private set; }
+
+        public bool EstaAutenticado => !string.IsNullOrWhiteSpace(UtilizadorLogado);
+
         public bool RegistarEntrada(string inputId)
         {
             if (!IdValido(inputId, out int id))
                 return false;
 
-            try
-            {
-                model.RegistarEntrada(id);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            return ExecutarOperacaoModelo(() => model.RegistarEntrada(id));
         }
 
-        // Regista a saída de um colaborador após validar o ID
         public bool RegistarSaida(string inputId)
         {
             if (!IdValido(inputId, out int id))
                 return false;
 
-            try
-            {
-                model.RegistarSaida(id);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            return ExecutarOperacaoModelo(() => model.RegistarSaida(id));
         }
 
-        // Verifica se o username e password correspondem a um colaborador existente
         public bool ValidarLogin(string username, string password)
         {
+            UtilizadorLogado = null;
+
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
                 return false;
 
             try
             {
-                string passwordCorreta = model.GetPassword(username);
-                return model.ValidarLogin(username, password);
+                bool loginValido = model.ValidarLogin(username, password);
+
+                if (loginValido)
+                    UtilizadorLogado = username.Trim();
+
+                return loginValido;
             }
-            catch
+            catch (ArgumentException)
+            {
+                return false;
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
+            catch (Exception)
             {
                 return false;
             }
         }
 
-        // Devolve o histórico de registos, por colaborador e datas
+        public void TerminarSessao()
+        {
+            UtilizadorLogado = null;
+        }
+
         public List<IRegistoPonto> ObterHistorico(int? colaboradorId = null, DateTime? dataInicio = null, DateTime? dataFim = null)
         {
-            List<IRegistoPonto> lista = model.ObterRegistos();
+            if (colaboradorId.HasValue && colaboradorId.Value <= 0)
+                return [];
+
+            if (!IntervaloDatasValido(dataInicio, dataFim))
+                return [];
+
+            List<IRegistoPonto> lista;
+
+            try
+            {
+                lista = model.ObterRegistos();
+            }
+            catch (Exception)
+            {
+                return [];
+            }
 
             if (colaboradorId.HasValue)
                 lista = lista.Where(r => r.IdColaborador == colaboradorId.Value).ToList();
@@ -79,9 +97,11 @@ namespace SistemaPicagemPonto.Controller
             return lista;
         }
 
-        // Calcula o total de horas trabalhadas com base nos registos completos
         public double CalcularTotalHoras(int colaboradorId, DateTime? dataInicio = null, DateTime? dataFim = null)
         {
+            if (colaboradorId <= 0 || !IntervaloDatasValido(dataInicio, dataFim))
+                return 0;
+
             List<IRegistoPonto> registos = ObterHistorico(colaboradorId, dataInicio, dataFim);
 
             double total = registos
@@ -91,7 +111,6 @@ namespace SistemaPicagemPonto.Controller
             return Math.Round(total, 2);
         }
 
-        // Garante que o ID introduzido é numérico e positivo
         private static bool IdValido(string input, out int id)
         {
             if (string.IsNullOrWhiteSpace(input))
@@ -101,6 +120,32 @@ namespace SistemaPicagemPonto.Controller
             }
 
             return int.TryParse(input.Trim(), out id) && id > 0;
+        }
+
+        private static bool IntervaloDatasValido(DateTime? dataInicio, DateTime? dataFim)
+        {
+            return !dataInicio.HasValue || !dataFim.HasValue || dataInicio.Value <= dataFim.Value;
+        }
+
+        private static bool ExecutarOperacaoModelo(Action operacao)
+        {
+            try
+            {
+                operacao();
+                return true;
+            }
+            catch (ArgumentException)
+            {
+                return false;
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

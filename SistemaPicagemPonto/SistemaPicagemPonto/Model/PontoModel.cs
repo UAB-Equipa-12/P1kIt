@@ -13,7 +13,7 @@ namespace SistemaPicagemPonto.Model
         private readonly List<Colaborador> Colaboradores =
         [
             new Colaborador { Id = 1, Nome = "Colaborador1", Password = "1234" },
-            new Colaborador { Id = 42, Nome = "Colaborador2", Password = "abcd" }
+            new Colaborador { Id = 2, Nome = "Colaborador2", Password = "abcd" }
         ];
 
         public PontoModel(IJsonRepository repository)
