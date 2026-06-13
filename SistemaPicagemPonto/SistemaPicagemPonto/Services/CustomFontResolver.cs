@@ -6,14 +6,20 @@ public class CustomFontResolver : IFontResolver
 {
     public byte[] GetFont(string faceName)
     {
-        string caminhoFonte = "/usr/share/fonts/truetype/msttcorefonts/Arial.ttf";
-        
-        if (!File.Exists(caminhoFonte))
+        string[] caminhosPossiveis =
         {
-            throw new FileNotFoundException("Fonte necessária para gerar o PDF não encontrada.", caminhoFonte);
+            "/usr/share/fonts/truetype/msttcorefonts/Arial.ttf",
+            "/System/Library/Fonts/Supplemental/Arial.ttf"
+        };
+
+        string? caminhoFonte = caminhosPossiveis.FirstOrDefault(File.Exists);
+
+        if (caminhoFonte == null)
+        {
+            throw new FileNotFoundException("Fonte necessária para gerar o PDF não encontrada.");
         }
 
-    return File.ReadAllBytes(caminhoFonte);
+        return File.ReadAllBytes(caminhoFonte);
     }
     
     public FontResolverInfo ResolveTypeface(
