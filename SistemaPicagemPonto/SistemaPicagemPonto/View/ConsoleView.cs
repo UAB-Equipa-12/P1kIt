@@ -83,7 +83,7 @@ namespace SistemaPicagemPonto.View
             {
                 Console.Clear();
                 Console.WriteLine("=== Login Plataforma de Gestão ===");
-                Console.Write("Username: ");
+                Console.Write("Digite ID: ");
                 string username = Console.ReadLine() ?? "";
 
                 Console.Write("Password: ");
@@ -129,7 +129,7 @@ namespace SistemaPicagemPonto.View
             Console.WriteLine();
         }
 
-        private static int? LerIdColaborador()
+        /* private static int? LerIdColaborador()
         {
             Console.Write("Introduza o ID do colaborador: ");
             string? input = Console.ReadLine();
@@ -141,6 +141,36 @@ namespace SistemaPicagemPonto.View
             }
 
             return id;
+        } */
+          private int? LerIdColaborador()
+         {
+          // 1. Obtém o colaborador que fez o login com sucesso
+          dynamic utilizador = controller.UtilizadorAtivo;
+
+          if (utilizador == null)
+          {
+             Console.WriteLine("Erro: Nenhuma sessão ativa encontrada.");
+             return null;
+          }
+
+          // 2. REGRA DE SEGURANÇA SEM HARDCODE:
+          // Se for o administrador do sistema, ele tem privilégios e pode digitar qualquer ID
+          if (utilizador.Nome.Equals("admin", StringComparison.OrdinalIgnoreCase))
+          {
+          Console.Write("Modo Admin - Introduza o ID do colaborador: ");
+          string? input = Console.ReadLine();
+
+          if (!int.TryParse(input, out int id) || id <= 0)
+          {
+            Console.WriteLine("Erro: ID inválido.");
+            return null;
+          }
+          return id;
+          }
+
+          // 3. SE FOR UTILIZADOR COMUM:
+          // O sistema ignora o teclado e assume automaticamente o ID seguro da sessão dele!
+          return utilizador.Id;
         }
 
         private void RegistarEntrada()
