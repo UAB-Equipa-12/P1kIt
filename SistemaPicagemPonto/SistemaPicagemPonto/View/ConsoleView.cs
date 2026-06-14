@@ -191,7 +191,7 @@ namespace SistemaPicagemPonto.View
                 string saida = registo.HoraSaida?.ToString("HH:mm:ss") ?? "-";
 
                 Console.WriteLine(
-                    $"Data: {registo.Data:dd/MM/yyyy} | Entrada: {entrada} | Saída: {saida}"
+                    $"Data: {registo.Data:aaaa/mm/dd} | Entrada: {entrada} | Saída: {saida}"
                 );
             }
         }
@@ -220,10 +220,10 @@ namespace SistemaPicagemPonto.View
             if (!id.HasValue)
                 return;
 
-            Console.Write("Data inicial (dd/MM/yyyy) ou ENTER para ignorar: ");
+            Console.Write("Data inicial (aaaa/mm/dd) ou ENTER para ignorar: ");
             string? inputInicio = Console.ReadLine();
 
-            Console.Write("Data final (dd/MM/yyyy) ou ENTER para ignorar: ");
+            Console.Write("Data final (aaaa/mm/dd) ou ENTER para ignorar: ");
             string? inputFim = Console.ReadLine();
 
             DateTime? dataInicio = null;
