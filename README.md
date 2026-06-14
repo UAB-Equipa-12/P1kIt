@@ -58,25 +58,31 @@ Contém a informação necessária para autenticação dos utilizadores.
 
 ### registos.json
 
-Contém os registos de entrada e saída efetuados pelos colaboradores.
+O ficheiro de registos é criado automaticamente pela aplicação durante a primeira execução, caso ainda não exista.
 
-Os ficheiros são carregados automaticamente durante o arranque da aplicação.
+Os dados de entrada e saída dos colaboradores são persistidos neste ficheiro.
 
 ---
 
-## Exportação PDF
+## Configuração da Exportação PDF (Ubuntu / WSL)
 
-A aplicação permite exportar relatórios de assiduidade para PDF.
+A funcionalidade de exportação PDF utiliza a biblioteca PDFsharp e requer a disponibilidade de uma fonte TrueType no sistema.
 
-Os relatórios incluem:
+Em Ubuntu/WSL recomenda-se a instalação das fontes Microsoft:
 
-* Identificação do colaborador.
-* Datas dos registos.
-* Horas de entrada.
-* Horas de saída.
-* Total de horas trabalhadas no período selecionado.
+```bash
+sudo apt update
+sudo apt install ttf-mscorefonts-installer
+```
 
-Os ficheiros PDF são gerados automaticamente na pasta de execução da aplicação.
+Caso sejam utilizadas fontes DejaVu:
+
+```bash
+sudo apt update
+sudo apt install fonts-dejavu-core
+```
+
+Após a instalação das fontes, a geração de relatórios PDF funciona normalmente em ambiente Linux e Ubuntu/WSL.
 
 ---
 
@@ -93,11 +99,9 @@ SistemaPicagemPonto/
 │   └── CustomFontResolver.cs
 ├── View/
 ├── colaboradores.json
-├── registos.json
 └── Program.cs
 ```
 
----
 
 ## Tecnologias Utilizadas
 
