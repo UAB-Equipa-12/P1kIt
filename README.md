@@ -66,25 +66,24 @@ Os dados de entrada e saída dos colaboradores são persistidos neste ficheiro.
 
 ## Configuração da Exportação PDF (Ubuntu / WSL)
 
-A funcionalidade de exportação PDF utiliza a biblioteca PDFsharp e requer a disponibilidade de uma fonte TrueType no sistema.
+A funcionalidade de exportação PDF utiliza a biblioteca PDFsharp e requer a disponibilidade da fonte Arial no sistema operativo.
 
-Em Ubuntu/WSL recomenda-se a instalação das fontes Microsoft:
+Em Ubuntu/WSL recomenda-se a instalação das fontes Microsoft Core Fonts:
 
 ```bash
 sudo apt update
 sudo apt install ttf-mscorefonts-installer
 ```
 
-Caso sejam utilizadas fontes DejaVu:
+Após a instalação, confirme a existência da fonte Arial:
 
 ```bash
-sudo apt update
-sudo apt install fonts-dejavu-core
+find /usr/share/fonts -iname "*arial*.ttf"
 ```
 
-Após a instalação das fontes, a geração de relatórios PDF funciona normalmente em ambiente Linux e Ubuntu/WSL.
+Caso a aplicação não consiga localizar a fonte, verifique o caminho configurado na classe `CustomFontResolver.cs`.
 
----
+Esta configuração é necessária para permitir a geração correta dos relatórios PDF em ambiente Linux/WSL.
 
 ## Estrutura do Projeto
 
