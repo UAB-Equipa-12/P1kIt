@@ -4,7 +4,7 @@ namespace SistemaPicagemPonto.Controller
 {
     public interface IPontoController
     {
-        string? UtilizadorLogado { get; }
+        UtilizadorSessao? UtilizadorAtivo { get; }
         bool EstaAutenticado { get; }
         bool RegistarEntrada(string inputId);
         bool RegistarSaida(string inputId);

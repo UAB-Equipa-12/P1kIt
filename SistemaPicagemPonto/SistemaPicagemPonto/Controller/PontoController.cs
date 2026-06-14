@@ -2,6 +2,12 @@ using SistemaPicagemPonto.Interfaces;
 
 namespace SistemaPicagemPonto.Controller
 {
+    public sealed class UtilizadorSessao
+    {
+        public int Id { get; init; }
+        public string Nome { get; init; } = string.Empty;
+    }
+
     public class PontoController : IPontoController
     {
         private readonly IPontoModel model;
@@ -11,9 +17,9 @@ namespace SistemaPicagemPonto.Controller
             this.model = model ?? throw new ArgumentNullException(nameof(model));
         }
 
-        public string? UtilizadorLogado { get; private set; }
+        public UtilizadorSessao? UtilizadorAtivo { get; private set; }
 
-        public bool EstaAutenticado => !string.IsNullOrWhiteSpace(UtilizadorLogado);
+        public bool EstaAutenticado => UtilizadorAtivo != null;
 
         public bool RegistarEntrada(string inputId)
         {
@@ -33,19 +39,31 @@ namespace SistemaPicagemPonto.Controller
 
         public bool ValidarLogin(string username, string password)
         {
-            UtilizadorLogado = null;
+            UtilizadorAtivo = null;
 
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
                 return false;
 
+            string usernameNormalizado = username.Trim();
+            string passwordNormalizada = password.Trim();
+
             try
             {
-                bool loginValido = model.ValidarLogin(username, password);
+                bool loginValido = model.ValidarLogin(usernameNormalizado, passwordNormalizada);
+                string nomeSessao = usernameNormalizado;
 
-                if (loginValido)
-                    UtilizadorLogado = username.Trim();
+                if (!loginValido && int.TryParse(usernameNormalizado, out int idLogin))
+                {
+                    string nomeColaborador = $"Colaborador{idLogin}";
+                    loginValido = model.ValidarLogin(nomeColaborador, passwordNormalizada);
+                    nomeSessao = usernameNormalizado;
+                }
 
-                return loginValido;
+                if (!loginValido)
+                    return false;
+
+                UtilizadorAtivo = CriarUtilizadorSessao(nomeSessao);
+                return UtilizadorAtivo != null;
             }
             catch (ArgumentException)
             {
@@ -63,7 +81,7 @@ namespace SistemaPicagemPonto.Controller
 
         public void TerminarSessao()
         {
-            UtilizadorLogado = null;
+            UtilizadorAtivo = null;
         }
 
         public List<IRegistoPonto> ObterHistorico(int? colaboradorId = null, DateTime? dataInicio = null, DateTime? dataFim = null)
@@ -125,6 +143,31 @@ namespace SistemaPicagemPonto.Controller
         private static bool IntervaloDatasValido(DateTime? dataInicio, DateTime? dataFim)
         {
             return !dataInicio.HasValue || !dataFim.HasValue || dataInicio.Value <= dataFim.Value;
+        }
+
+        private static UtilizadorSessao? CriarUtilizadorSessao(string username)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+                return null;
+
+            string nome = username.Trim();
+
+            if (nome.Equals("admin", StringComparison.OrdinalIgnoreCase))
+                return new UtilizadorSessao { Id = 0, Nome = "admin" };
+
+            if (int.TryParse(nome, out int id) && id > 0)
+                return new UtilizadorSessao { Id = id, Nome = nome };
+
+            const string prefixoColaborador = "Colaborador";
+
+            if (nome.StartsWith(prefixoColaborador, StringComparison.OrdinalIgnoreCase) &&
+                int.TryParse(nome[prefixoColaborador.Length..], out int idColaborador) &&
+                idColaborador > 0)
+            {
+                return new UtilizadorSessao { Id = idColaborador, Nome = nome };
+            }
+
+            return null;
         }
 
         private static bool ExecutarOperacaoModelo(Action operacao)
