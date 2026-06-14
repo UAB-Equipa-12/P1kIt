@@ -191,7 +191,7 @@ namespace SistemaPicagemPonto.View
                 string saida = registo.HoraSaida?.ToString("HH:mm:ss") ?? "-";
 
                 Console.WriteLine(
-                    $"Data: {registo.Data:aaaa/mm/dd} | Entrada: {entrada} | Saída: {saida}"
+                    $"Data: {registo.Data:yyyy/MM/dd} | Entrada: {entrada} | Saída: {saida}"
                 );
             }
         }
