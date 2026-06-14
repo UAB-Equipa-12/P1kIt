@@ -2,19 +2,32 @@
 
 ## Descrição
 
-O Sistema de Picagem de Ponto é uma aplicação desenvolvida em C# que permite efetuar o registo e consulta de entradas e saídas de colaboradores. A aplicação segue a arquitetura MVC (Model-View-Controller), promovendo a separação de responsabilidades e facilitando a manutenção e evolução do código.
+O Sistema de Picagem de Ponto é uma aplicação desenvolvida em C# que permite efetuar o registo de entradas e saídas de colaboradores, consultar históricos de assiduidade e exportar relatórios para PDF.
 
-Os registos são persistidos em formato JSON e podem ser exportados para PDF para efeitos de consulta e arquivo.
+O projeto foi desenvolvido no âmbito da unidade curricular Laboratório de Desenvolvimento de Software da Universidade Aberta, seguindo a arquitetura MVC (Model-View-Controller) e aplicando princípios de redução de dependências entre componentes através da utilização de interfaces.
+
+---
+
+## Funcionalidades
+
+* Autenticação de utilizadores.
+* Registo de entrada.
+* Registo de saída.
+* Consulta do histórico de registos.
+* Cálculo de horas trabalhadas num determinado período.
+* Persistência de dados em JSON.
+* Exportação de relatórios para PDF.
+* Tratamento de exceções e validação de entradas.
 
 ---
 
 ## Arquitetura
 
-O projeto segue o padrão MVC:
+O sistema segue o padrão MVC (Model-View-Controller).
 
 ### Model
 
-Responsável pela gestão dos dados, regras de negócio e persistência da informação.
+Responsável pelas regras de negócio, gestão dos colaboradores, registos de ponto e persistência de dados.
 
 ### View
 
@@ -26,7 +39,7 @@ Responsável pela coordenação entre a View e o Model.
 
 ### Interfaces Utilizadas
 
-Para reduzir o acoplamento entre componentes e melhorar a reutilização do código, foram utilizadas as seguintes interfaces:
+Para reduzir o acoplamento entre componentes e aumentar a adaptabilidade do sistema foram utilizadas as seguintes interfaces:
 
 * IPontoController
 * IPontoModel
@@ -35,15 +48,54 @@ Para reduzir o acoplamento entre componentes e melhorar a reutilização do cód
 
 ---
 
-## Funcionalidades
+## Persistência
 
-* Autenticação de colaboradores
-* Registo de entrada
-* Registo de saída
-* Consulta de histórico de registos
-* Persistência de dados em JSON
-* Exportação de histórico para PDF
-* Validação básica de operações
+A aplicação utiliza ficheiros JSON para armazenamento de dados.
+
+### colaboradores.json
+
+Contém a informação necessária para autenticação dos utilizadores.
+
+### registos.json
+
+Contém os registos de entrada e saída efetuados pelos colaboradores.
+
+Os ficheiros são carregados automaticamente durante o arranque da aplicação.
+
+---
+
+## Exportação PDF
+
+A aplicação permite exportar relatórios de assiduidade para PDF.
+
+Os relatórios incluem:
+
+* Identificação do colaborador.
+* Datas dos registos.
+* Horas de entrada.
+* Horas de saída.
+* Total de horas trabalhadas no período selecionado.
+
+Os ficheiros PDF são gerados automaticamente na pasta de execução da aplicação.
+
+---
+
+## Estrutura do Projeto
+
+```text
+SistemaPicagemPonto/
+
+├── Controller/
+├── Interfaces/
+├── Model/
+├── Services/
+│   ├── PdfExporter.cs
+│   └── CustomFontResolver.cs
+├── View/
+├── colaboradores.json
+├── registos.json
+└── Program.cs
+```
 
 ---
 
@@ -56,64 +108,21 @@ Para reduzir o acoplamento entre componentes e melhorar a reutilização do cód
 
 ---
 
-## Estrutura do Projeto
-
-SistemaPicagemPonto/
-
-├── Controller/
-
-├── Interfaces/
-
-├── Model/
-
-├── Services/
-
-├── View/
-
-└── Program.cs
-
----
-
-## Persistência de Dados
-
-Os registos são armazenados no ficheiro:
-
-registos.json
-
-O ficheiro é criado automaticamente durante a execução da aplicação.
-
----
-
-## Exportação PDF
-
-A aplicação permite exportar o histórico de registos de um colaborador para um ficheiro PDF.
-
-O relatório inclui:
-
-* Identificação do colaborador
-* Datas dos registos
-* Horas de entrada
-* Horas de saída
-
-Os ficheiros PDF são gerados na pasta de execução da aplicação.
-
----
-
 ## Instalação
 
-Restaurar dependências:
+### Restaurar dependências
 
 ```bash
 dotnet restore
 ```
 
-Compilar:
+### Compilar
 
 ```bash
 dotnet build
 ```
 
-Executar:
+### Executar
 
 ```bash
 dotnet run
@@ -121,46 +130,49 @@ dotnet run
 
 ---
 
-## Credenciais de Teste
+## Compatibilidade
 
-### Colaborador 1
+A aplicação foi validada em:
 
-Utilizador: Colaborador1
-
-Password: 1234
-
-### Colaborador 2
-
-Utilizador: Colaborador2
-
-Password: abcd
+* Windows
+* Ubuntu (WSL)
 
 ---
 
 ## Equipa
 
-### Team Leader
+### Pedro Ramalho
 
-Pedro Ramalho
+Team Leader e Integração Final
 
-### Desenvolvimento do Model
+### Rui Araújo
 
-Rui Araújo
+Desenvolvimento do Model e Persistência
 
-### Desenvolvimento do Controller
+### Andreia
 
-Andreia
+Desenvolvimento do Controller
 
-### Desenvolvimento da View
+### Fabiana
 
-Fabiana
+Desenvolvimento da View
 
-### Verificação e QA
+### Jorge Priolé
 
-Jorge Priolé
+Verificação e QA
 
 ---
 
-## Observações
+## Melhorias Futuras
 
-Durante o desenvolvimento foram aplicados princípios de separação entre interface e implementação, utilização de interfaces para redução de dependências diretas entre componentes e organização do código segundo o padrão MVC, promovendo uma solução mais modular e de fácil manutenção.
+* Persistência em base de dados.
+* Gestão avançada de perfis e permissões.
+* Interface gráfica.
+* Testes automatizados.
+* Exportação para formatos adicionais.
+
+---
+
+## Licença
+
+Projeto desenvolvido para fins académicos no âmbito da unidade curricular Laboratório de Desenvolvimento de Software da Universidade Aberta.
